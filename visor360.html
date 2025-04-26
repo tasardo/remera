@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Camiseta 360°</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f7f7f7;
+            margin: 0;
+        }
+        #viewer {
+            width: 500px;
+            height: 500px;
+            background: #fff;
+            overflow: hidden;
+            position: relative;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        #viewer img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+        #viewer img.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div id="viewer">
+    <img src="frente.png" class="active" alt="Frente">
+    <img src="45grados.png" alt="45 Grados">
+    <img src="dorso.png" alt="Dorso">
+</div>
+
+<script>
+const viewer = document.getElementById('viewer');
+const images = viewer.querySelectorAll('img');
+let currentIndex = 0;
+let startX = 0;
+
+viewer.addEventListener('mousedown', (e) => {
+    startX = e.clientX;
+    viewer.addEventListener('mousemove', onMouseMove);
+});
+
+viewer.addEventListener('mouseup', () => {
+    viewer.removeEventListener('mousemove', onMouseMove);
+});
+
+viewer.addEventListener('mouseleave', () => {
+    viewer.removeEventListener('mousemove', onMouseMove);
+});
+
+function onMouseMove(e) {
+    const deltaX = e.clientX - startX;
+    if (Math.abs(deltaX) > 30) { // sensibilidad
+        if (deltaX > 0) {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+        } else {
+            currentIndex = (currentIndex + 1) % images.length;
+        }
+        updateViewer();
+        startX = e.clientX;
+    }
+}
+
+function updateViewer() {
+    images.forEach(img => img.classList.remove('active'));
+    images[currentIndex].classList.add('active');
+}
+</script>
+
+</body>
+</html>
